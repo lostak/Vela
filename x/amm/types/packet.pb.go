@@ -25,6 +25,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 type AmmPacketData struct {
 	// Types that are valid to be assigned to Packet:
 	//	*AmmPacketData_NoData
+	//	*AmmPacketData_AddLiquidityPacket
 	//	*AmmPacketData_CreatePoolPacket
 	Packet isAmmPacketData_Packet `protobuf_oneof:"packet"`
 }
@@ -71,12 +72,16 @@ type isAmmPacketData_Packet interface {
 type AmmPacketData_NoData struct {
 	NoData *NoData `protobuf:"bytes,1,opt,name=noData,proto3,oneof" json:"noData,omitempty"`
 }
+type AmmPacketData_AddLiquidityPacket struct {
+	AddLiquidityPacket *AddLiquidityPacketData `protobuf:"bytes,3,opt,name=addLiquidityPacket,proto3,oneof" json:"addLiquidityPacket,omitempty"`
+}
 type AmmPacketData_CreatePoolPacket struct {
 	CreatePoolPacket *CreatePoolPacketData `protobuf:"bytes,2,opt,name=createPoolPacket,proto3,oneof" json:"createPoolPacket,omitempty"`
 }
 
-func (*AmmPacketData_NoData) isAmmPacketData_Packet()           {}
-func (*AmmPacketData_CreatePoolPacket) isAmmPacketData_Packet() {}
+func (*AmmPacketData_NoData) isAmmPacketData_Packet()             {}
+func (*AmmPacketData_AddLiquidityPacket) isAmmPacketData_Packet() {}
+func (*AmmPacketData_CreatePoolPacket) isAmmPacketData_Packet()   {}
 
 func (m *AmmPacketData) GetPacket() isAmmPacketData_Packet {
 	if m != nil {
@@ -92,6 +97,13 @@ func (m *AmmPacketData) GetNoData() *NoData {
 	return nil
 }
 
+func (m *AmmPacketData) GetAddLiquidityPacket() *AddLiquidityPacketData {
+	if x, ok := m.GetPacket().(*AmmPacketData_AddLiquidityPacket); ok {
+		return x.AddLiquidityPacket
+	}
+	return nil
+}
+
 func (m *AmmPacketData) GetCreatePoolPacket() *CreatePoolPacketData {
 	if x, ok := m.GetPacket().(*AmmPacketData_CreatePoolPacket); ok {
 		return x.CreatePoolPacket
@@ -103,6 +115,7 @@ func (m *AmmPacketData) GetCreatePoolPacket() *CreatePoolPacketData {
 func (*AmmPacketData) XXX_OneofWrappers() []interface{} {
 	return []interface{}{
 		(*AmmPacketData_NoData)(nil),
+		(*AmmPacketData_AddLiquidityPacket)(nil),
 		(*AmmPacketData_CreatePoolPacket)(nil),
 	}
 }
@@ -241,34 +254,140 @@ func (m *CreatePoolPacketAck) GetPoolId() int32 {
 	return 0
 }
 
+// AddLiquidityPacketData defines a struct for the packet payload
+type AddLiquidityPacketData struct {
+	AmountVela  string `protobuf:"bytes,1,opt,name=amountVela,proto3" json:"amountVela,omitempty"`
+	AmountOther string `protobuf:"bytes,2,opt,name=amountOther,proto3" json:"amountOther,omitempty"`
+}
+
+func (m *AddLiquidityPacketData) Reset()         { *m = AddLiquidityPacketData{} }
+func (m *AddLiquidityPacketData) String() string { return proto.CompactTextString(m) }
+func (*AddLiquidityPacketData) ProtoMessage()    {}
+func (*AddLiquidityPacketData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a7c32ba42bae7bc3, []int{4}
+}
+func (m *AddLiquidityPacketData) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AddLiquidityPacketData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_AddLiquidityPacketData.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *AddLiquidityPacketData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddLiquidityPacketData.Merge(m, src)
+}
+func (m *AddLiquidityPacketData) XXX_Size() int {
+	return m.Size()
+}
+func (m *AddLiquidityPacketData) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddLiquidityPacketData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddLiquidityPacketData proto.InternalMessageInfo
+
+func (m *AddLiquidityPacketData) GetAmountVela() string {
+	if m != nil {
+		return m.AmountVela
+	}
+	return ""
+}
+
+func (m *AddLiquidityPacketData) GetAmountOther() string {
+	if m != nil {
+		return m.AmountOther
+	}
+	return ""
+}
+
+// AddLiquidityPacketAck defines a struct for the packet acknowledgment
+type AddLiquidityPacketAck struct {
+	AmountShares string `protobuf:"bytes,1,opt,name=amountShares,proto3" json:"amountShares,omitempty"`
+}
+
+func (m *AddLiquidityPacketAck) Reset()         { *m = AddLiquidityPacketAck{} }
+func (m *AddLiquidityPacketAck) String() string { return proto.CompactTextString(m) }
+func (*AddLiquidityPacketAck) ProtoMessage()    {}
+func (*AddLiquidityPacketAck) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a7c32ba42bae7bc3, []int{5}
+}
+func (m *AddLiquidityPacketAck) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AddLiquidityPacketAck) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_AddLiquidityPacketAck.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *AddLiquidityPacketAck) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddLiquidityPacketAck.Merge(m, src)
+}
+func (m *AddLiquidityPacketAck) XXX_Size() int {
+	return m.Size()
+}
+func (m *AddLiquidityPacketAck) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddLiquidityPacketAck.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddLiquidityPacketAck proto.InternalMessageInfo
+
+func (m *AddLiquidityPacketAck) GetAmountShares() string {
+	if m != nil {
+		return m.AmountShares
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*AmmPacketData)(nil), "lostak.vela.amm.AmmPacketData")
 	proto.RegisterType((*NoData)(nil), "lostak.vela.amm.NoData")
 	proto.RegisterType((*CreatePoolPacketData)(nil), "lostak.vela.amm.CreatePoolPacketData")
 	proto.RegisterType((*CreatePoolPacketAck)(nil), "lostak.vela.amm.CreatePoolPacketAck")
+	proto.RegisterType((*AddLiquidityPacketData)(nil), "lostak.vela.amm.AddLiquidityPacketData")
+	proto.RegisterType((*AddLiquidityPacketAck)(nil), "lostak.vela.amm.AddLiquidityPacketAck")
 }
 
 func init() { proto.RegisterFile("amm/packet.proto", fileDescriptor_a7c32ba42bae7bc3) }
 
 var fileDescriptor_a7c32ba42bae7bc3 = []byte{
-	// 272 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x48, 0xcc, 0xcd, 0xd5,
-	0x2f, 0x48, 0x4c, 0xce, 0x4e, 0x2d, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0xcf, 0xc9,
-	0x2f, 0x2e, 0x49, 0xcc, 0xd6, 0x2b, 0x4b, 0xcd, 0x49, 0xd4, 0x4b, 0xcc, 0xcd, 0x55, 0x5a, 0xc8,
-	0xc8, 0xc5, 0xeb, 0x98, 0x9b, 0x1b, 0x00, 0x56, 0xe4, 0x92, 0x58, 0x92, 0x28, 0x64, 0xc8, 0xc5,
-	0x96, 0x97, 0x0f, 0x62, 0x49, 0x30, 0x2a, 0x30, 0x6a, 0x70, 0x1b, 0x89, 0xeb, 0xa1, 0xe9, 0xd1,
-	0xf3, 0x03, 0x4b, 0x7b, 0x30, 0x04, 0x41, 0x15, 0x0a, 0x05, 0x73, 0x09, 0x24, 0x17, 0xa5, 0x26,
-	0x96, 0xa4, 0x06, 0xe4, 0xe7, 0xe7, 0x40, 0x8c, 0x92, 0x60, 0x02, 0x6b, 0x56, 0xc5, 0xd0, 0xec,
-	0x8c, 0xa6, 0x10, 0x6a, 0x14, 0x86, 0x01, 0x4e, 0x1c, 0x5c, 0x6c, 0x10, 0xa7, 0x2b, 0x71, 0x70,
-	0xb1, 0x41, 0xac, 0x54, 0x0a, 0xe1, 0x12, 0xc1, 0xa6, 0x5f, 0x48, 0x86, 0x8b, 0xb3, 0x00, 0x2c,
-	0x52, 0x94, 0x98, 0x0b, 0x76, 0x36, 0x67, 0x10, 0x42, 0x40, 0x48, 0x8e, 0x8b, 0x0b, 0xc4, 0x71,
-	0x2c, 0x2e, 0x4e, 0x2d, 0x29, 0x06, 0x3b, 0x8c, 0x33, 0x08, 0x49, 0x44, 0x49, 0x97, 0x4b, 0x18,
-	0xdd, 0x54, 0xc7, 0xe4, 0x6c, 0x21, 0x31, 0x2e, 0x36, 0x90, 0x22, 0xcf, 0x14, 0xb0, 0x89, 0xac,
-	0x41, 0x50, 0x9e, 0x93, 0xcd, 0x89, 0x47, 0x72, 0x8c, 0x17, 0x1e, 0xc9, 0x31, 0x3e, 0x78, 0x24,
-	0xc7, 0x38, 0xe1, 0xb1, 0x1c, 0xc3, 0x85, 0xc7, 0x72, 0x0c, 0x37, 0x1e, 0xcb, 0x31, 0x44, 0x29,
-	0xa5, 0x67, 0x96, 0x64, 0x94, 0x26, 0xe9, 0x25, 0xe7, 0xe7, 0xea, 0x43, 0xfc, 0xad, 0x1f, 0x96,
-	0x9a, 0x93, 0xa8, 0x5f, 0xa1, 0x0f, 0x8a, 0x88, 0x92, 0xca, 0x82, 0xd4, 0xe2, 0x24, 0x36, 0x70,
-	0x44, 0x18, 0x03, 0x02, 0x00, 0x00, 0xff, 0xff, 0xbc, 0x76, 0x8f, 0xe3, 0x9c, 0x01, 0x00, 0x00,
+	// 354 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x92, 0x41, 0x4b, 0xc3, 0x30,
+	0x1c, 0xc5, 0x5b, 0xc5, 0xb2, 0xfd, 0xa7, 0x38, 0xa2, 0xce, 0x1d, 0x24, 0x8c, 0x80, 0xe8, 0xc5,
+	0x16, 0xf5, 0xa8, 0x97, 0x4e, 0x0f, 0x0a, 0xa2, 0xa3, 0x13, 0xc1, 0xdd, 0xb2, 0x36, 0xb8, 0xb2,
+	0x66, 0xa9, 0x6d, 0x26, 0xee, 0x5b, 0xf8, 0xb1, 0x3c, 0xee, 0xe8, 0x51, 0xb6, 0xaf, 0xe1, 0x41,
+	0x92, 0x06, 0x9c, 0xeb, 0x6e, 0xfd, 0xbf, 0xbe, 0xf7, 0xeb, 0xeb, 0x3f, 0x81, 0x3a, 0xe5, 0xdc,
+	0x4b, 0x69, 0x38, 0x64, 0xd2, 0x4d, 0x33, 0x21, 0x05, 0xda, 0x4e, 0x44, 0x2e, 0xe9, 0xd0, 0x7d,
+	0x63, 0x09, 0x75, 0x29, 0xe7, 0xe4, 0xc7, 0x86, 0x2d, 0x9f, 0xf3, 0x8e, 0x36, 0x5d, 0x53, 0x49,
+	0xd1, 0x29, 0x38, 0x23, 0xa1, 0x9e, 0x9a, 0x76, 0xcb, 0x3e, 0xae, 0x9d, 0xed, 0xbb, 0x4b, 0x19,
+	0xf7, 0x5e, 0xbf, 0xbe, 0xb1, 0x02, 0x63, 0x44, 0xcf, 0x80, 0x68, 0x14, 0xdd, 0xc5, 0xaf, 0xe3,
+	0x38, 0x8a, 0xe5, 0xa4, 0x80, 0x35, 0xd7, 0x75, 0xfc, 0xa8, 0x14, 0xf7, 0x4b, 0x56, 0x83, 0x5b,
+	0x01, 0x41, 0x5d, 0xa8, 0x87, 0x19, 0xa3, 0x92, 0x75, 0x84, 0x48, 0x0c, 0x78, 0x4d, 0x83, 0x0f,
+	0x4b, 0xe0, 0xab, 0x25, 0xa3, 0xc1, 0x96, 0x00, 0xed, 0x0a, 0x38, 0xc5, 0x56, 0x48, 0x05, 0x9c,
+	0xe2, 0x6f, 0xc8, 0x23, 0xec, 0xae, 0xca, 0xa3, 0x03, 0xa8, 0xa6, 0x5a, 0xc9, 0x28, 0xd7, 0x1b,
+	0xa9, 0x06, 0x7f, 0x02, 0xc2, 0x00, 0x6a, 0xf0, 0xf3, 0x9c, 0xc9, 0x5c, 0x17, 0xab, 0x06, 0x0b,
+	0x0a, 0x39, 0x81, 0x9d, 0x65, 0xaa, 0x1f, 0x0e, 0x51, 0x03, 0x1c, 0x65, 0xba, 0x8d, 0x34, 0x71,
+	0x23, 0x30, 0x13, 0xe9, 0x41, 0x63, 0xf5, 0x76, 0xd4, 0x87, 0x28, 0x17, 0xe3, 0x91, 0x7c, 0x62,
+	0x09, 0x35, 0x3d, 0x16, 0x14, 0xd4, 0x82, 0x5a, 0x31, 0x3d, 0xc8, 0x01, 0xcb, 0x4c, 0x93, 0x45,
+	0x89, 0x5c, 0xc0, 0x5e, 0x99, 0xad, 0xca, 0x10, 0xd8, 0x2c, 0x7c, 0xdd, 0x01, 0xcd, 0x58, 0x6e,
+	0xe0, 0xff, 0xb4, 0xf6, 0xe5, 0xe7, 0x0c, 0xdb, 0xd3, 0x19, 0xb6, 0xbf, 0x67, 0xd8, 0xfe, 0x98,
+	0x63, 0x6b, 0x3a, 0xc7, 0xd6, 0xd7, 0x1c, 0x5b, 0x3d, 0xf2, 0x12, 0xcb, 0xc1, 0xb8, 0xef, 0x86,
+	0x82, 0x7b, 0xc5, 0x81, 0x78, 0xaa, 0x90, 0xf7, 0xee, 0xa9, 0xcb, 0x27, 0x27, 0x29, 0xcb, 0xfb,
+	0x8e, 0xbe, 0x7c, 0xe7, 0xbf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x61, 0x9a, 0xac, 0x2f, 0x90, 0x02,
+	0x00, 0x00,
 }
 
 func (m *AmmPacketData) Marshal() (dAtA []byte, err error) {
@@ -342,6 +461,27 @@ func (m *AmmPacketData_CreatePoolPacket) MarshalToSizedBuffer(dAtA []byte) (int,
 		}
 		i--
 		dAtA[i] = 0x12
+	}
+	return len(dAtA) - i, nil
+}
+func (m *AmmPacketData_AddLiquidityPacket) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AmmPacketData_AddLiquidityPacket) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	if m.AddLiquidityPacket != nil {
+		{
+			size, err := m.AddLiquidityPacket.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPacket(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
 	}
 	return len(dAtA) - i, nil
 }
@@ -433,6 +573,73 @@ func (m *CreatePoolPacketAck) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *AddLiquidityPacketData) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AddLiquidityPacketData) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AddLiquidityPacketData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.AmountOther) > 0 {
+		i -= len(m.AmountOther)
+		copy(dAtA[i:], m.AmountOther)
+		i = encodeVarintPacket(dAtA, i, uint64(len(m.AmountOther)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.AmountVela) > 0 {
+		i -= len(m.AmountVela)
+		copy(dAtA[i:], m.AmountVela)
+		i = encodeVarintPacket(dAtA, i, uint64(len(m.AmountVela)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *AddLiquidityPacketAck) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AddLiquidityPacketAck) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AddLiquidityPacketAck) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.AmountShares) > 0 {
+		i -= len(m.AmountShares)
+		copy(dAtA[i:], m.AmountShares)
+		i = encodeVarintPacket(dAtA, i, uint64(len(m.AmountShares)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintPacket(dAtA []byte, offset int, v uint64) int {
 	offset -= sovPacket(v)
 	base := offset
@@ -480,6 +687,18 @@ func (m *AmmPacketData_CreatePoolPacket) Size() (n int) {
 	}
 	return n
 }
+func (m *AmmPacketData_AddLiquidityPacket) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.AddLiquidityPacket != nil {
+		l = m.AddLiquidityPacket.Size()
+		n += 1 + l + sovPacket(uint64(l))
+	}
+	return n
+}
 func (m *NoData) Size() (n int) {
 	if m == nil {
 		return 0
@@ -514,6 +733,36 @@ func (m *CreatePoolPacketAck) Size() (n int) {
 	_ = l
 	if m.PoolId != 0 {
 		n += 1 + sovPacket(uint64(m.PoolId))
+	}
+	return n
+}
+
+func (m *AddLiquidityPacketData) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.AmountVela)
+	if l > 0 {
+		n += 1 + l + sovPacket(uint64(l))
+	}
+	l = len(m.AmountOther)
+	if l > 0 {
+		n += 1 + l + sovPacket(uint64(l))
+	}
+	return n
+}
+
+func (m *AddLiquidityPacketAck) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.AmountShares)
+	if l > 0 {
+		n += 1 + l + sovPacket(uint64(l))
 	}
 	return n
 }
@@ -622,6 +871,41 @@ func (m *AmmPacketData) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			m.Packet = &AmmPacketData_CreatePoolPacket{v}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AddLiquidityPacket", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPacket
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthPacket
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPacket
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			v := &AddLiquidityPacketData{}
+			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			m.Packet = &AmmPacketData_AddLiquidityPacket{v}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -856,6 +1140,202 @@ func (m *CreatePoolPacketAck) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPacket(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthPacket
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *AddLiquidityPacketData) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPacket
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AddLiquidityPacketData: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AddLiquidityPacketData: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AmountVela", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPacket
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPacket
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPacket
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AmountVela = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AmountOther", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPacket
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPacket
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPacket
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AmountOther = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPacket(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthPacket
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *AddLiquidityPacketAck) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPacket
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AddLiquidityPacketAck: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AddLiquidityPacketAck: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AmountShares", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPacket
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPacket
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPacket
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AmountShares = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPacket(dAtA[iNdEx:])

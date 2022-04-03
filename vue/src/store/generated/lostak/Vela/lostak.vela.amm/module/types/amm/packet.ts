@@ -6,6 +6,8 @@ export const protobufPackage = "lostak.vela.amm";
 export interface AmmPacketData {
   noData: NoData | undefined;
   /** this line is used by starport scaffolding # ibc/packet/proto/field */
+  addLiquidityPacket: AddLiquidityPacketData | undefined;
+  /** this line is used by starport scaffolding # ibc/packet/proto/field/number */
   createPoolPacket: CreatePoolPacketData | undefined;
 }
 
@@ -22,12 +24,29 @@ export interface CreatePoolPacketAck {
   poolId: number;
 }
 
+/** AddLiquidityPacketData defines a struct for the packet payload */
+export interface AddLiquidityPacketData {
+  amountVela: string;
+  amountOther: string;
+}
+
+/** AddLiquidityPacketAck defines a struct for the packet acknowledgment */
+export interface AddLiquidityPacketAck {
+  amountShares: string;
+}
+
 const baseAmmPacketData: object = {};
 
 export const AmmPacketData = {
   encode(message: AmmPacketData, writer: Writer = Writer.create()): Writer {
     if (message.noData !== undefined) {
       NoData.encode(message.noData, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.addLiquidityPacket !== undefined) {
+      AddLiquidityPacketData.encode(
+        message.addLiquidityPacket,
+        writer.uint32(26).fork()
+      ).ldelim();
     }
     if (message.createPoolPacket !== undefined) {
       CreatePoolPacketData.encode(
@@ -47,6 +66,12 @@ export const AmmPacketData = {
       switch (tag >>> 3) {
         case 1:
           message.noData = NoData.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.addLiquidityPacket = AddLiquidityPacketData.decode(
+            reader,
+            reader.uint32()
+          );
           break;
         case 2:
           message.createPoolPacket = CreatePoolPacketData.decode(
@@ -70,6 +95,16 @@ export const AmmPacketData = {
       message.noData = undefined;
     }
     if (
+      object.addLiquidityPacket !== undefined &&
+      object.addLiquidityPacket !== null
+    ) {
+      message.addLiquidityPacket = AddLiquidityPacketData.fromJSON(
+        object.addLiquidityPacket
+      );
+    } else {
+      message.addLiquidityPacket = undefined;
+    }
+    if (
       object.createPoolPacket !== undefined &&
       object.createPoolPacket !== null
     ) {
@@ -86,6 +121,10 @@ export const AmmPacketData = {
     const obj: any = {};
     message.noData !== undefined &&
       (obj.noData = message.noData ? NoData.toJSON(message.noData) : undefined);
+    message.addLiquidityPacket !== undefined &&
+      (obj.addLiquidityPacket = message.addLiquidityPacket
+        ? AddLiquidityPacketData.toJSON(message.addLiquidityPacket)
+        : undefined);
     message.createPoolPacket !== undefined &&
       (obj.createPoolPacket = message.createPoolPacket
         ? CreatePoolPacketData.toJSON(message.createPoolPacket)
@@ -99,6 +138,16 @@ export const AmmPacketData = {
       message.noData = NoData.fromPartial(object.noData);
     } else {
       message.noData = undefined;
+    }
+    if (
+      object.addLiquidityPacket !== undefined &&
+      object.addLiquidityPacket !== null
+    ) {
+      message.addLiquidityPacket = AddLiquidityPacketData.fromPartial(
+        object.addLiquidityPacket
+      );
+    } else {
+      message.addLiquidityPacket = undefined;
     }
     if (
       object.createPoolPacket !== undefined &&
@@ -280,6 +329,145 @@ export const CreatePoolPacketAck = {
       message.poolId = object.poolId;
     } else {
       message.poolId = 0;
+    }
+    return message;
+  },
+};
+
+const baseAddLiquidityPacketData: object = { amountVela: "", amountOther: "" };
+
+export const AddLiquidityPacketData = {
+  encode(
+    message: AddLiquidityPacketData,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.amountVela !== "") {
+      writer.uint32(10).string(message.amountVela);
+    }
+    if (message.amountOther !== "") {
+      writer.uint32(18).string(message.amountOther);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): AddLiquidityPacketData {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseAddLiquidityPacketData } as AddLiquidityPacketData;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.amountVela = reader.string();
+          break;
+        case 2:
+          message.amountOther = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): AddLiquidityPacketData {
+    const message = { ...baseAddLiquidityPacketData } as AddLiquidityPacketData;
+    if (object.amountVela !== undefined && object.amountVela !== null) {
+      message.amountVela = String(object.amountVela);
+    } else {
+      message.amountVela = "";
+    }
+    if (object.amountOther !== undefined && object.amountOther !== null) {
+      message.amountOther = String(object.amountOther);
+    } else {
+      message.amountOther = "";
+    }
+    return message;
+  },
+
+  toJSON(message: AddLiquidityPacketData): unknown {
+    const obj: any = {};
+    message.amountVela !== undefined && (obj.amountVela = message.amountVela);
+    message.amountOther !== undefined &&
+      (obj.amountOther = message.amountOther);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<AddLiquidityPacketData>
+  ): AddLiquidityPacketData {
+    const message = { ...baseAddLiquidityPacketData } as AddLiquidityPacketData;
+    if (object.amountVela !== undefined && object.amountVela !== null) {
+      message.amountVela = object.amountVela;
+    } else {
+      message.amountVela = "";
+    }
+    if (object.amountOther !== undefined && object.amountOther !== null) {
+      message.amountOther = object.amountOther;
+    } else {
+      message.amountOther = "";
+    }
+    return message;
+  },
+};
+
+const baseAddLiquidityPacketAck: object = { amountShares: "" };
+
+export const AddLiquidityPacketAck = {
+  encode(
+    message: AddLiquidityPacketAck,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.amountShares !== "") {
+      writer.uint32(10).string(message.amountShares);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): AddLiquidityPacketAck {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseAddLiquidityPacketAck } as AddLiquidityPacketAck;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.amountShares = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): AddLiquidityPacketAck {
+    const message = { ...baseAddLiquidityPacketAck } as AddLiquidityPacketAck;
+    if (object.amountShares !== undefined && object.amountShares !== null) {
+      message.amountShares = String(object.amountShares);
+    } else {
+      message.amountShares = "";
+    }
+    return message;
+  },
+
+  toJSON(message: AddLiquidityPacketAck): unknown {
+    const obj: any = {};
+    message.amountShares !== undefined &&
+      (obj.amountShares = message.amountShares);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<AddLiquidityPacketAck>
+  ): AddLiquidityPacketAck {
+    const message = { ...baseAddLiquidityPacketAck } as AddLiquidityPacketAck;
+    if (object.amountShares !== undefined && object.amountShares !== null) {
+      message.amountShares = object.amountShares;
+    } else {
+      message.amountShares = "";
     }
     return message;
   },

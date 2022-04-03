@@ -167,6 +167,25 @@ func (am AppModule) OnRecvPacket(
 				sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),
 			),
 		)
+	case *types.AmmPacketData_AddLiquidityPacket:
+		packetAck, err := am.keeper.OnRecvAddLiquidityPacket(ctx, modulePacket, *packet.AddLiquidityPacket)
+		if err != nil {
+			ack = channeltypes.NewErrorAcknowledgement(err.Error())
+		} else {
+			// Encode packet acknowledgment
+			packetAckBytes, err := types.ModuleCdc.MarshalJSON(&packetAck)
+			if err != nil {
+				return channeltypes.NewErrorAcknowledgement(sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error()).Error())
+			}
+			ack = channeltypes.NewResultAcknowledgement(sdk.MustSortJSON(packetAckBytes))
+		}
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeAddLiquidityPacket,
+				sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+				sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),
+			),
+		)
 		// this line is used by starport scaffolding # ibc/packet/module/recv
 	default:
 		errMsg := fmt.Sprintf("unrecognized %s packet type: %T", types.ModuleName, packet)
@@ -206,6 +225,12 @@ func (am AppModule) OnAcknowledgementPacket(
 			return err
 		}
 		eventType = types.EventTypeCreatePoolPacket
+	case *types.AmmPacketData_AddLiquidityPacket:
+		err := am.keeper.OnAcknowledgementAddLiquidityPacket(ctx, modulePacket, *packet.AddLiquidityPacket, ack)
+		if err != nil {
+			return err
+		}
+		eventType = types.EventTypeAddLiquidityPacket
 		// this line is used by starport scaffolding # ibc/packet/module/ack
 	default:
 		errMsg := fmt.Sprintf("unrecognized %s packet type: %T", types.ModuleName, packet)
@@ -255,6 +280,11 @@ func (am AppModule) OnTimeoutPacket(
 	switch packet := modulePacketData.Packet.(type) {
 	case *types.AmmPacketData_CreatePoolPacket:
 		err := am.keeper.OnTimeoutCreatePoolPacket(ctx, modulePacket, *packet.CreatePoolPacket)
+		if err != nil {
+			return err
+		}
+	case *types.AmmPacketData_AddLiquidityPacket:
+		err := am.keeper.OnTimeoutAddLiquidityPacket(ctx, modulePacket, *packet.AddLiquidityPacket)
 		if err != nil {
 			return err
 		}

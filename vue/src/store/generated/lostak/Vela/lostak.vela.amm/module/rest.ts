@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+export type AmmMsgSendAddLiquidityResponse = object;
+
 export type AmmMsgSendCreatePoolResponse = object;
 
 /**
