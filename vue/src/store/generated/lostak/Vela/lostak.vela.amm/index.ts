@@ -6,11 +6,13 @@ import { CreatePoolPacketData } from "./module/types/amm/packet"
 import { CreatePoolPacketAck } from "./module/types/amm/packet"
 import { AddLiquidityPacketData } from "./module/types/amm/packet"
 import { AddLiquidityPacketAck } from "./module/types/amm/packet"
+import { RemoveLiquidityPacketData } from "./module/types/amm/packet"
+import { RemoveLiquidityPacketAck } from "./module/types/amm/packet"
 import { Params } from "./module/types/amm/params"
 import { Pool } from "./module/types/amm/pool"
 
 
-export { AmmPacketData, NoData, CreatePoolPacketData, CreatePoolPacketAck, AddLiquidityPacketData, AddLiquidityPacketAck, Params, Pool };
+export { AmmPacketData, NoData, CreatePoolPacketData, CreatePoolPacketAck, AddLiquidityPacketData, AddLiquidityPacketAck, RemoveLiquidityPacketData, RemoveLiquidityPacketAck, Params, Pool };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -59,6 +61,8 @@ const getDefaultState = () => {
 						CreatePoolPacketAck: getStructure(CreatePoolPacketAck.fromPartial({})),
 						AddLiquidityPacketData: getStructure(AddLiquidityPacketData.fromPartial({})),
 						AddLiquidityPacketAck: getStructure(AddLiquidityPacketAck.fromPartial({})),
+						RemoveLiquidityPacketData: getStructure(RemoveLiquidityPacketData.fromPartial({})),
+						RemoveLiquidityPacketAck: getStructure(RemoveLiquidityPacketAck.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
 						Pool: getStructure(Pool.fromPartial({})),
 						
@@ -226,6 +230,21 @@ export default {
 				}
 			}
 		},
+		async sendMsgSendRemoveLiquidity({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgSendRemoveLiquidity(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSendRemoveLiquidity:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgSendRemoveLiquidity:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		async sendMsgSendAddLiquidity({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -252,6 +271,19 @@ export default {
 					throw new Error('TxClient:MsgSendCreatePool:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgSendCreatePool:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgSendRemoveLiquidity({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgSendRemoveLiquidity(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSendRemoveLiquidity:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgSendRemoveLiquidity:Create Could not create message: ' + e.message)
 				}
 			}
 		},

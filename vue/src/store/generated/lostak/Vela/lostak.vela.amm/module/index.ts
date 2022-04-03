@@ -5,11 +5,13 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgSendCreatePool } from "./types/amm/tx";
+import { MsgSendRemoveLiquidity } from "./types/amm/tx";
 import { MsgSendAddLiquidity } from "./types/amm/tx";
 
 
 const types = [
   ["/lostak.vela.amm.MsgSendCreatePool", MsgSendCreatePool],
+  ["/lostak.vela.amm.MsgSendRemoveLiquidity", MsgSendRemoveLiquidity],
   ["/lostak.vela.amm.MsgSendAddLiquidity", MsgSendAddLiquidity],
   
 ];
@@ -44,6 +46,7 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
     msgSendCreatePool: (data: MsgSendCreatePool): EncodeObject => ({ typeUrl: "/lostak.vela.amm.MsgSendCreatePool", value: MsgSendCreatePool.fromPartial( data ) }),
+    msgSendRemoveLiquidity: (data: MsgSendRemoveLiquidity): EncodeObject => ({ typeUrl: "/lostak.vela.amm.MsgSendRemoveLiquidity", value: MsgSendRemoveLiquidity.fromPartial( data ) }),
     msgSendAddLiquidity: (data: MsgSendAddLiquidity): EncodeObject => ({ typeUrl: "/lostak.vela.amm.MsgSendAddLiquidity", value: MsgSendAddLiquidity.fromPartial( data ) }),
     
   };

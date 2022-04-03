@@ -13,6 +13,8 @@ export type AmmMsgSendAddLiquidityResponse = object;
 
 export type AmmMsgSendCreatePoolResponse = object;
 
+export type AmmMsgSendRemoveLiquidityResponse = object;
+
 /**
  * Params defines the parameters for the module.
  */

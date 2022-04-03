@@ -9,6 +9,7 @@ option go_package = "github.com/lostak/Vela/x/amm/types";
 service Msg {
       rpc SendCreatePool(MsgSendCreatePool) returns (MsgSendCreatePoolResponse);
   rpc SendAddLiquidity(MsgSendAddLiquidity) returns (MsgSendAddLiquidityResponse);
+  rpc SendRemoveLiquidity(MsgSendRemoveLiquidity) returns (MsgSendRemoveLiquidityResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -33,5 +34,16 @@ message MsgSendAddLiquidity {
 }
 
 message MsgSendAddLiquidityResponse {
+}
+message MsgSendRemoveLiquidity {
+  string creator = 1;
+  string port = 2;
+  string channelID = 3;
+  uint64 timeoutTimestamp = 4;
+  string amountShare = 5;
+  string amountOther = 6;
+}
+
+message MsgSendRemoveLiquidityResponse {
 }
 // this line is used by starport scaffolding # proto/tx/message

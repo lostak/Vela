@@ -6,6 +6,8 @@ export const protobufPackage = "lostak.vela.amm";
 export interface AmmPacketData {
   noData: NoData | undefined;
   /** this line is used by starport scaffolding # ibc/packet/proto/field */
+  removeLiquidityPacket: RemoveLiquidityPacketData | undefined;
+  /** this line is used by starport scaffolding # ibc/packet/proto/field/number */
   addLiquidityPacket: AddLiquidityPacketData | undefined;
   /** this line is used by starport scaffolding # ibc/packet/proto/field/number */
   createPoolPacket: CreatePoolPacketData | undefined;
@@ -35,12 +37,29 @@ export interface AddLiquidityPacketAck {
   amountShares: string;
 }
 
+/** RemoveLiquidityPacketData defines a struct for the packet payload */
+export interface RemoveLiquidityPacketData {
+  amountShare: string;
+  amountOther: string;
+}
+
+/** RemoveLiquidityPacketAck defines a struct for the packet acknowledgment */
+export interface RemoveLiquidityPacketAck {
+  amountVela: string;
+}
+
 const baseAmmPacketData: object = {};
 
 export const AmmPacketData = {
   encode(message: AmmPacketData, writer: Writer = Writer.create()): Writer {
     if (message.noData !== undefined) {
       NoData.encode(message.noData, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.removeLiquidityPacket !== undefined) {
+      RemoveLiquidityPacketData.encode(
+        message.removeLiquidityPacket,
+        writer.uint32(34).fork()
+      ).ldelim();
     }
     if (message.addLiquidityPacket !== undefined) {
       AddLiquidityPacketData.encode(
@@ -66,6 +85,12 @@ export const AmmPacketData = {
       switch (tag >>> 3) {
         case 1:
           message.noData = NoData.decode(reader, reader.uint32());
+          break;
+        case 4:
+          message.removeLiquidityPacket = RemoveLiquidityPacketData.decode(
+            reader,
+            reader.uint32()
+          );
           break;
         case 3:
           message.addLiquidityPacket = AddLiquidityPacketData.decode(
@@ -95,6 +120,16 @@ export const AmmPacketData = {
       message.noData = undefined;
     }
     if (
+      object.removeLiquidityPacket !== undefined &&
+      object.removeLiquidityPacket !== null
+    ) {
+      message.removeLiquidityPacket = RemoveLiquidityPacketData.fromJSON(
+        object.removeLiquidityPacket
+      );
+    } else {
+      message.removeLiquidityPacket = undefined;
+    }
+    if (
       object.addLiquidityPacket !== undefined &&
       object.addLiquidityPacket !== null
     ) {
@@ -121,6 +156,10 @@ export const AmmPacketData = {
     const obj: any = {};
     message.noData !== undefined &&
       (obj.noData = message.noData ? NoData.toJSON(message.noData) : undefined);
+    message.removeLiquidityPacket !== undefined &&
+      (obj.removeLiquidityPacket = message.removeLiquidityPacket
+        ? RemoveLiquidityPacketData.toJSON(message.removeLiquidityPacket)
+        : undefined);
     message.addLiquidityPacket !== undefined &&
       (obj.addLiquidityPacket = message.addLiquidityPacket
         ? AddLiquidityPacketData.toJSON(message.addLiquidityPacket)
@@ -138,6 +177,16 @@ export const AmmPacketData = {
       message.noData = NoData.fromPartial(object.noData);
     } else {
       message.noData = undefined;
+    }
+    if (
+      object.removeLiquidityPacket !== undefined &&
+      object.removeLiquidityPacket !== null
+    ) {
+      message.removeLiquidityPacket = RemoveLiquidityPacketData.fromPartial(
+        object.removeLiquidityPacket
+      );
+    } else {
+      message.removeLiquidityPacket = undefined;
     }
     if (
       object.addLiquidityPacket !== undefined &&
@@ -468,6 +517,166 @@ export const AddLiquidityPacketAck = {
       message.amountShares = object.amountShares;
     } else {
       message.amountShares = "";
+    }
+    return message;
+  },
+};
+
+const baseRemoveLiquidityPacketData: object = {
+  amountShare: "",
+  amountOther: "",
+};
+
+export const RemoveLiquidityPacketData = {
+  encode(
+    message: RemoveLiquidityPacketData,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.amountShare !== "") {
+      writer.uint32(10).string(message.amountShare);
+    }
+    if (message.amountOther !== "") {
+      writer.uint32(18).string(message.amountOther);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): RemoveLiquidityPacketData {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseRemoveLiquidityPacketData,
+    } as RemoveLiquidityPacketData;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.amountShare = reader.string();
+          break;
+        case 2:
+          message.amountOther = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RemoveLiquidityPacketData {
+    const message = {
+      ...baseRemoveLiquidityPacketData,
+    } as RemoveLiquidityPacketData;
+    if (object.amountShare !== undefined && object.amountShare !== null) {
+      message.amountShare = String(object.amountShare);
+    } else {
+      message.amountShare = "";
+    }
+    if (object.amountOther !== undefined && object.amountOther !== null) {
+      message.amountOther = String(object.amountOther);
+    } else {
+      message.amountOther = "";
+    }
+    return message;
+  },
+
+  toJSON(message: RemoveLiquidityPacketData): unknown {
+    const obj: any = {};
+    message.amountShare !== undefined &&
+      (obj.amountShare = message.amountShare);
+    message.amountOther !== undefined &&
+      (obj.amountOther = message.amountOther);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<RemoveLiquidityPacketData>
+  ): RemoveLiquidityPacketData {
+    const message = {
+      ...baseRemoveLiquidityPacketData,
+    } as RemoveLiquidityPacketData;
+    if (object.amountShare !== undefined && object.amountShare !== null) {
+      message.amountShare = object.amountShare;
+    } else {
+      message.amountShare = "";
+    }
+    if (object.amountOther !== undefined && object.amountOther !== null) {
+      message.amountOther = object.amountOther;
+    } else {
+      message.amountOther = "";
+    }
+    return message;
+  },
+};
+
+const baseRemoveLiquidityPacketAck: object = { amountVela: "" };
+
+export const RemoveLiquidityPacketAck = {
+  encode(
+    message: RemoveLiquidityPacketAck,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.amountVela !== "") {
+      writer.uint32(10).string(message.amountVela);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): RemoveLiquidityPacketAck {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseRemoveLiquidityPacketAck,
+    } as RemoveLiquidityPacketAck;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.amountVela = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RemoveLiquidityPacketAck {
+    const message = {
+      ...baseRemoveLiquidityPacketAck,
+    } as RemoveLiquidityPacketAck;
+    if (object.amountVela !== undefined && object.amountVela !== null) {
+      message.amountVela = String(object.amountVela);
+    } else {
+      message.amountVela = "";
+    }
+    return message;
+  },
+
+  toJSON(message: RemoveLiquidityPacketAck): unknown {
+    const obj: any = {};
+    message.amountVela !== undefined && (obj.amountVela = message.amountVela);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<RemoveLiquidityPacketAck>
+  ): RemoveLiquidityPacketAck {
+    const message = {
+      ...baseRemoveLiquidityPacketAck,
+    } as RemoveLiquidityPacketAck;
+    if (object.amountVela !== undefined && object.amountVela !== null) {
+      message.amountVela = object.amountVela;
+    } else {
+      message.amountVela = "";
     }
     return message;
   },
