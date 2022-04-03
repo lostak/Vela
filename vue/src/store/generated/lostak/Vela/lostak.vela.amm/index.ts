@@ -2,11 +2,13 @@ import { txClient, queryClient, MissingWalletError , registry} from './module'
 
 import { AmmPacketData } from "./module/types/amm/packet"
 import { NoData } from "./module/types/amm/packet"
+import { CreatePoolPacketData } from "./module/types/amm/packet"
+import { CreatePoolPacketAck } from "./module/types/amm/packet"
 import { Params } from "./module/types/amm/params"
 import { Pool } from "./module/types/amm/pool"
 
 
-export { AmmPacketData, NoData, Params, Pool };
+export { AmmPacketData, NoData, CreatePoolPacketData, CreatePoolPacketAck, Params, Pool };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -51,6 +53,8 @@ const getDefaultState = () => {
 				_Structure: {
 						AmmPacketData: getStructure(AmmPacketData.fromPartial({})),
 						NoData: getStructure(NoData.fromPartial({})),
+						CreatePoolPacketData: getStructure(CreatePoolPacketData.fromPartial({})),
+						CreatePoolPacketAck: getStructure(CreatePoolPacketAck.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
 						Pool: getStructure(Pool.fromPartial({})),
 						
@@ -203,7 +207,35 @@ export default {
 		},
 		
 		
+		async sendMsgSendCreatePool({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgSendCreatePool(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSendCreatePool:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgSendCreatePool:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		
+		async MsgSendCreatePool({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgSendCreatePool(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSendCreatePool:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgSendCreatePool:Create Could not create message: ' + e.message)
+				}
+			}
+		},
 		
 	}
 }

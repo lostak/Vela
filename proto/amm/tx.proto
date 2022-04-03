@@ -7,7 +7,19 @@ option go_package = "github.com/lostak/Vela/x/amm/types";
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc SendCreatePool(MsgSendCreatePool) returns (MsgSendCreatePoolResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
 }
 
+message MsgSendCreatePool {
+  string creator = 1;
+  string port = 2;
+  string channelID = 3;
+  uint64 timeoutTimestamp = 4;
+  string poolParam = 5;
+  string poolAssets = 6;
+}
+
+message MsgSendCreatePoolResponse {
+}
 // this line is used by starport scaffolding # proto/tx/message

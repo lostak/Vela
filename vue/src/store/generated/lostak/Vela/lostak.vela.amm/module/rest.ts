@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+export type AmmMsgSendCreatePoolResponse = object;
+
 /**
  * Params defines the parameters for the module.
  */

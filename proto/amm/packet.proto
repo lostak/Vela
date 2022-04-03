@@ -9,10 +9,21 @@ message AmmPacketData {
     oneof packet {
         NoData noData = 1;
         // this line is used by starport scaffolding # ibc/packet/proto/field
+				CreatePoolPacketData createPoolPacket = 2; // this line is used by starport scaffolding # ibc/packet/proto/field/number
     }
 }
 
 message NoData {
 }
 
+// CreatePoolPacketData defines a struct for the packet payload
+message CreatePoolPacketData {
+  string poolParam = 1;
+  string poolAssets = 2;
+}
+
+// CreatePoolPacketAck defines a struct for the packet acknowledgment
+message CreatePoolPacketAck {
+	  int32 poolId = 1;
+}
 // this line is used by starport scaffolding # ibc/packet/proto/message

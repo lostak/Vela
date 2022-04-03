@@ -47192,6 +47192,8 @@ definitions:
     description: >-
       QueryAppVersionResponse is the response type for the Query/AppVersion RPC
       method.
+  lostak.vela.amm.MsgSendCreatePoolResponse:
+    type: object
   lostak.vela.amm.Params:
     type: object
     description: Params defines the parameters for the module.
