@@ -1,0 +1,11 @@
+syntax = "proto3";
+package lostak.vela.amm;
+
+option go_package = "github.com/lostak/Vela/x/amm/types";
+
+message Pool {
+  string index = 1; 
+  string poolId = 2; 
+  
+}
+

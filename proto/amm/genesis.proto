@@ -3,6 +3,7 @@ package lostak.vela.amm;
 
 import "gogoproto/gogo.proto";
 import "amm/params.proto";
+import "amm/pool.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "github.com/lostak/Vela/x/amm/types";
@@ -11,5 +12,6 @@ option go_package = "github.com/lostak/Vela/x/amm/types";
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
   string port_id = 2;
+  repeated Pool poolList = 3 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }
